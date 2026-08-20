@@ -18,11 +18,24 @@ class checklist:
 
     def print_tasks(self):
         for task in self.tasks:
-            if task["status"]:
+            if task["status"]==True:
                 self.box = "[x]"
             else:
                 self.box = "[ ]"
             print(f"{self.box} {task["task_name"]}")
+
+    def progress_bar(self):
+        if len(self.tasks) == 0:
+            return 0
+        
+        self.done = 0
+        self.total = len(self.tasks)
+        for task in self.tasks:
+            if task["status"] == True:
+                self.done += 1
+        self.progress = (self.done/self.total)*100
+        print(f"{self.progress}%")
+
 
 
 
@@ -37,6 +50,11 @@ my_list.print_tasks()
 print("-----------")
 my_list.toggle_task(0)
 my_list.print_tasks()
+my_list.progress_bar()
+my_list.add_task("task5")
+print("-----------")
+my_list.print_tasks()
+my_list.progress_bar()
 
 
 
