@@ -16,15 +16,27 @@ class checklist:
     def toggle_task(self, index):      #ticking and unticking off tasks
         self.tasks[index]["status"] = not self.tasks[index]["status"]    #task you have selected to mark done, its status will change to the opposite
 
+    def print_tasks(self):
+        for task in self.tasks:
+            if task["status"]:
+                self.box = "[x]"
+            else:
+                self.box = "[ ]"
+            print(f"{self.box} {task["task_name"]}")
+
+
 
 my_list = checklist()
-print(my_list.tasks)
+my_list.print_tasks()
+print("-----------")
 my_list.add_task("task4")
-print(my_list.tasks)
+my_list.print_tasks()
+print("-----------")
 my_list.del_task(2)
-print(my_list.tasks)
+my_list.print_tasks()
+print("-----------")
 my_list.toggle_task(0)
-print(my_list.tasks)
+my_list.print_tasks()
 
 
 
