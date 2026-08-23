@@ -5,7 +5,7 @@ from tkinter import ttk
 class GUI:
     def __init__(self):
 
-        self.todolist = checklist()
+        self.todolist = checklist()     #link to checklist
 
         self.root = tk.Tk()
         self.root.geometry("800x500")
@@ -82,12 +82,12 @@ class GUI:
         self.todolist.add_task(self.task_name)
         #create the checkbox
         self.is_ticked = tk.BooleanVar(value=False)
-        checkbox= tk.Checkbutton(self.taskframe, text=self.task_name, font=('Arial', 15), background="white", variable=self.is_ticked)
-        checkbox.pack(anchor="w")
+        self.checkbox= tk.Checkbutton(self.taskframe, text=self.task_name, font=('Arial', 15), background="white", variable=self.is_ticked)
+        self.checkbox.pack(anchor="w")
 
         #store the references
         self.todolist.tasks[-1]["is_ticked"] = self.is_ticked       #item goes to end of the list to refer to the just added task
-        self.todolist.tasks[-1]["widget"] = checkbox
+        self.todolist.tasks[-1]["widget"] = self.checkbox
 
         #clear textbox once button pressed
         self.add_textbox.delete("1.0", tk.END)
