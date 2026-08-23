@@ -1,10 +1,83 @@
+import tkinter as tk
+from tkinter import ttk
+
+
+class GUI:
+    def __init__(self):
+        self.root = tk.Tk()
+        self.root.geometry("800x500")
+        self.root.title("checklist")
+
+        self.label = tk.Label(self.root, text="To Do List", font =('Arial', 20))
+        self.label.pack(padx=20, pady=20)
+
+
+        #progress bar
+        style = ttk.Style()
+        style.theme_use("default")
+
+        style.configure("Thick.Vertical.TProgressbar", thickness= 50)       #bar width
+
+        # proress bar frame
+        self.progress_frame = tk.Frame(self.root)
+        self.progress_frame.place(relx=0.75, rely=0.5, anchor="center")
+        self.progress_frame.pack_propagate(True)
+
+        self.progress_bar = ttk.Progressbar(self.progress_frame, orient="vertical", length=150, mode="determinate", style="Thick.Vertical.TProgressbar")
+        self.progress_bar.pack(pady=20)
+
+        self.progress_bar['value']=50
+        #SET IT TO MATCH WHATS IN THE CHECKLIST CLASS-----------
+
+        self.progress_label = tk.Label(self.progress_frame, text="x% complete", font=('Arial', 15))
+        self.progress_label.pack()
+
+
+
+
+        # put textbox inside frame- so the tectbox can stick to the left hand side
+        self.frame= tk.Frame(self.root)
+        self.frame.pack(padx=20, pady=20, anchor="nw")  #top corner of the frame
+        # grid inside the frame
+        self.add_textbox = tk.Text(self.frame, height=1, width=40, font= ('Arial', 13))
+        self.add_textbox.grid(row=0, column=0, sticky="w")
+        # button also inside frame on the ride side of the textbox
+        self.add_btn = tk.Button(self.frame, text= "Add Task", font=('Arial', 13))
+        self.add_btn.grid(row=0, column=1, sticky="w")
+
+        # another frame for the canvas the checklists will be on
+        self.canvas_frame = tk.Frame(self.root)
+        self.canvas_frame.pack(padx=20, pady=20, anchor="w")
+        # create canvas
+        self.canvas = tk.Canvas(self.canvas_frame, width=400, height=230, background="white", highlightbackground="black", highlightthickness=1)
+        self.canvas.pack(side="left", padx=10)
+        # scrolling
+        self.scroll = tk.Scrollbar(self.canvas_frame, orient="vertical", command=self.canvas.yview)
+        self.scroll.pack(side="left", fill="y")
+        #LINK SCROLLBAR AND CANVAS HERE--------------
+
+        #button frame
+        self.btn_frame = tk.Frame(self.root)
+        self.btn_frame.pack(padx=300, anchor="nw")
+        #buttons
+        self.del_btn = tk.Button(self.btn_frame, text= "Delete", font=("Arial", 13))
+        self.del_btn.grid(row=0, column=0, padx=10)
+        self.del_btn = tk.Button(self.btn_frame, text= "Clear", font=("Arial", 13))
+        self.del_btn.grid(row=0, column=1, padx=10)
+
+        
+        
+
+        
+
+        self.root.mainloop()
+
 class checklist:
     def __init__(self):
         self.tasks = [{"task_name": "task1", "status": False}, 
                       {"task_name": "task2", "status": False}, 
                       {"task_name":"task3", "status": False}]        #all tasks start as false
                       
-                        
 
     def add_task(self, task_name):
         self.tasks.append({"task_name": task_name, "status": False})      #ensure new tasks are also started as false
@@ -36,25 +109,5 @@ class checklist:
         self.progress = (self.done/self.total)*100
         print(f"{self.progress}%")
 
-
-
-
-my_list = checklist()
-my_list.print_tasks()
-print("-----------")
-my_list.add_task("task4")
-my_list.print_tasks()
-print("-----------")
-my_list.del_task(2)
-my_list.print_tasks()
-print("-----------")
-my_list.toggle_task(0)
-my_list.print_tasks()
-my_list.progress_bar()
-my_list.add_task("task5")
-print("-----------")
-my_list.print_tasks()
-my_list.progress_bar()
-
-
+GUI()
 
