@@ -4,6 +4,9 @@ from tkinter import ttk
 
 class GUI:
     def __init__(self):
+
+        self.todolist = checklist()
+
         self.root = tk.Tk()
         self.root.geometry("800x500")
         self.root.title("checklist")
@@ -33,8 +36,6 @@ class GUI:
         self.progress_label.pack()
 
 
-
-
         # put textbox inside frame- so the tectbox can stick to the left hand side
         self.frame= tk.Frame(self.root)
         self.frame.pack(padx=20, pady=20, anchor="nw")  #top corner of the frame
@@ -42,7 +43,7 @@ class GUI:
         self.add_textbox = tk.Text(self.frame, height=1, width=40, font= ('Arial', 13))
         self.add_textbox.grid(row=0, column=0, sticky="w")
         # button also inside frame on the ride side of the textbox
-        self.add_btn = tk.Button(self.frame, text= "Add Task", font=('Arial', 13))
+        self.add_btn = tk.Button(self.frame, text= "Add Task", font=('Arial', 13), command =self.add_task_gui)
         self.add_btn.grid(row=0, column=1, sticky="w")
 
         # another frame for the canvas the checklists will be on
@@ -54,7 +55,13 @@ class GUI:
         # scrolling
         self.scroll = tk.Scrollbar(self.canvas_frame, orient="vertical", command=self.canvas.yview)
         self.scroll.pack(side="left", fill="y")
-        #LINK SCROLLBAR AND CANVAS HERE--------------
+        self.canvas.configure(yscrollcommand=self.scroll.set)
+
+        # task frame inside the canvas
+        self.taskframe = tk.Frame(self.canvas, background="white")
+        self.canvas.create_window((0, 0), window=self.taskframe, anchor="nw")
+        self.taskframe.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")) )    #updating the scroll
+
 
         #button frame
         self.btn_frame = tk.Frame(self.root)
@@ -62,15 +69,28 @@ class GUI:
         #buttons
         self.del_btn = tk.Button(self.btn_frame, text= "Delete", font=("Arial", 13))
         self.del_btn.grid(row=0, column=0, padx=10)
-        self.del_btn = tk.Button(self.btn_frame, text= "Clear", font=("Arial", 13))
-        self.del_btn.grid(row=0, column=1, padx=10)
-
-        
-        
-
-        
+        self.clear_btn = tk.Button(self.btn_frame, text= "Clear", font=("Arial", 13))
+        self.clear_btn.grid(row=0, column=1, padx=10)
 
         self.root.mainloop()
+
+    def add_task_gui(self):
+        self.task_name = self.add_textbox.get("1.0", tk.END).strip()    #read what the user types
+        if not self.task_name:      #if textbox is empty
+            return
+        #add to checklist logic
+        self.todolist.add_task(self.task_name)
+        #create the checkbox
+        self.is_ticked = tk.BooleanVar(value=False)
+        checkbox= tk.Checkbutton(self.taskframe, text=self.task_name, font=('Arial', 15), background="white", variable=self.is_ticked)
+        checkbox.pack(anchor="w")
+
+        #store the references
+        self.todolist.tasks[-1]["is_ticked"] = self.is_ticked       #item goes to end of the list to refer to the just added task
+        self.todolist.tasks[-1]["widget"] = checkbox
+
+        #clear textbox once button pressed
+        self.add_textbox.delete("1.0", tk.END)
 
 class checklist:
     def __init__(self):
