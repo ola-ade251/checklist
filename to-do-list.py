@@ -75,7 +75,7 @@ class GUI:
         self.btn_frame = tk.Frame(self.root)
         self.btn_frame.pack(padx=300, anchor="nw")
         #buttons
-        self.del_btn = tk.Button(self.btn_frame, text= "Delete", font=("Arial", 13))
+        self.del_btn = tk.Button(self.btn_frame, text= "Delete", font=("Arial", 13), command=self.del_task_gui)
         self.del_btn.grid(row=0, column=0, padx=10)
         self.clear_btn = tk.Button(self.btn_frame, text= "Clear", font=("Arial", 13))
         self.clear_btn.grid(row=0, column=1, padx=10)
@@ -142,6 +142,32 @@ class GUI:
                 self.checkbox.config(background="white")
                 self.task_label.config(background="white")
 
+
+    def del_task_gui(self):
+        if self.selected_task_idx is None:
+            return
+        
+        self.idx = self.selected_task_idx
+
+
+        #remove widgets
+        self.task= self.todolist.tasks[self.idx]
+        self.task["row"].destroy()
+
+        #remove task from list
+        self.todolist.del_task(self.idx)
+        #reset the selection
+        self.selected_task_idx = None
+
+        #rebind for other tasks
+        for i, task in enumerate(self.todolist.tasks):
+            self.task_row = task["row"]
+            self.task_label = task["label"]
+            #take away old binds, and rebind with new indexes
+            self.task_row.unbind("<Button-1>")
+            self.task_label.unbind("<Button-1>")
+            self.task_row.bind("<Button-1>", lambda e, idx=i: self.select_task(idx))
+            self.task_label.bind("<Button-1>", lambda e, idx=i: self.select_task(idx))
 
     #def check(self,event):
         #print(event.keysym)
