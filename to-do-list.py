@@ -98,7 +98,7 @@ class GUI:
         self.checkbox= tk.Checkbutton(self.task_row, variable=self.is_ticked, background="white")
         self.checkbox.pack(side="left")
         #add the label for the task
-        self.task_label= tk.Label(self.task_row, text=self.task_name, font=('Arial', 14), background="white")
+        self.task_label= tk.Label(self.task_row, text=self.task_name, font=('Arial', 14), background="white", wraplength=400, justify="left")
         self.task_label.pack(side="left")
 
         #store the references
