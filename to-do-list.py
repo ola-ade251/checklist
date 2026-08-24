@@ -42,6 +42,7 @@ class GUI:
 
         # grid inside the frame
         self.add_textbox = tk.Text(self.frame, height=1, width=40, font= ('Arial', 13))
+        #self.add_textbox.bind("<KeyPress>", self.check)
         self.add_textbox.grid(row=0, column=0, sticky="w")
 
         # button also inside frame on the ride side of the textbox
@@ -79,6 +80,10 @@ class GUI:
         self.clear_btn = tk.Button(self.btn_frame, text= "Clear", font=("Arial", 13))
         self.clear_btn.grid(row=0, column=1, padx=10)
 
+
+        # store task the user clicked
+        self.selected_task_idx= None
+
         self.root.mainloop()
 
 
@@ -93,6 +98,8 @@ class GUI:
         # one frame per task
         self.task_row = tk.Frame(self.task_frame, background="white")
         self.task_row.pack(anchor="w")
+        # click row to call selecting function, and update the index of the tasks
+        self.task_row.bind("<Button-1>", lambda e, idx=len(self.todolist.tasks)-1:self.select_task(idx))
         #add checkbox
         self.is_ticked = tk.BooleanVar(value=False)
         self.checkbox= tk.Checkbutton(self.task_row, variable=self.is_ticked, background="white")
@@ -100,19 +107,49 @@ class GUI:
         #add the label for the task
         self.task_label= tk.Label(self.task_row, text=self.task_name, font=('Arial', 14), background="white", wraplength=400, justify="left")
         self.task_label.pack(side="left")
+        self.task_label.bind("<Button-1>", lambda e, idx=len(self.todolist.tasks)-1:self.select_task(idx))
 
         #store the references
         self.todolist.tasks[-1]["is_ticked"] = self.is_ticked       #item goes to end of the list to refer to the just added task
-        self.todolist.tasks[-1]["widget"] = self.checkbox
+        self.todolist.tasks[-1]["row"] = self.task_row
+        self.todolist.tasks[-1]["checkbox"] = self.checkbox
+        self.todolist.tasks[-1]["label"] = self.task_label
+
 
         #clear textbox once button pressed
         self.add_textbox.delete("1.0", tk.END)
 
+
+    def select_task(self, index):
+        #select/deselect
+        if self.selected_task_idx == index:
+            self.selected_task_idx= None
+        else:
+            self.selected_task_idx = index
+
+        #highlight the selected task/row
+        for i, task in enumerate(self.todolist.tasks):
+            self.task_row = task.get("row")
+            self.checkbox = task.get("checkbox")
+            self.task_label = task.get("label")
+
+            if self.selected_task_idx == i:
+                self.task_row.config(background="light blue")
+                self.checkbox.config(background="light blue")
+                self.task_label.config(background="light blue")
+            else:
+                self.task_row.config(background="white")
+                self.checkbox.config(background="white")
+                self.task_label.config(background="white")
+
+
+    #def check(self,event):
+        #print(event.keysym)
+        #print(event.state)
+
 class checklist:
     def __init__(self):
-        self.tasks = [{"task_name": "task1", "status": False}, 
-                      {"task_name": "task2", "status": False}, 
-                      {"task_name":"task3", "status": False}]        #all tasks start as false
+        self.tasks = []        
                       
 
     def add_task(self, task_name):
