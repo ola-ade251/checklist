@@ -36,46 +36,38 @@ class GUI:
         self.progress_label.pack()
 
 
-        # put textbox inside frame- so the tectbox can stick to the left hand side
+        # put textbox inside frame- so the textbox can stick to the left hand side
         self.frame= tk.Frame(self.root)
         self.frame.pack(padx=20, pady=20, anchor="nw")  #top corner of the frame
+
         # grid inside the frame
         self.add_textbox = tk.Text(self.frame, height=1, width=40, font= ('Arial', 13))
         self.add_textbox.grid(row=0, column=0, sticky="w")
+
         # button also inside frame on the ride side of the textbox
         self.add_btn = tk.Button(self.frame, text= "Add Task", font=('Arial', 13), command =self.add_task_gui)
         self.add_btn.grid(row=0, column=1, sticky="w")
 
+
         # another frame for the canvas the checklists will be on
-        #self.canvas_frame = tk.Frame(self.root)
-        #self.canvas_frame.pack(padx=20, pady=20, anchor="w")
+        self.canvas_frame = tk.Frame(self.root)
+        self.canvas_frame.pack(padx=20, pady=20, anchor="w")
+
         # create canvas
-        #self.canvas = tk.Canvas(self.canvas_frame, width=400, height=230, background="white", highlightbackground="black", highlightthickness=1)
-        #self.canvas.pack(side="left", padx=10)
+        self.canvas = tk.Canvas(self.canvas_frame, width=400, height=230, background="white", highlightbackground="black", highlightthickness=1)
+        self.canvas.pack(side="left", padx=10)
+
         # scrolling
-        #self.scroll = tk.Scrollbar(self.canvas_frame, orient="vertical", command=self.canvas.yview)
-        #self.scroll.pack(side="left", fill="y")
-        #self.canvas.configure(yscrollcommand=self.scroll.set)
+        self.scroll = tk.Scrollbar(self.canvas_frame, orient="vertical", command=self.canvas.yview)
+        self.scroll.pack(side="left", fill="y")
+        self.canvas.configure(yscrollcommand=self.scroll.set)
 
         # task frame inside the canvas
-        #self.taskframe = tk.Frame(self.canvas, background="white")
-        #self.canvas.create_window((0, 0), window=self.taskframe, anchor="nw")
-        #self.taskframe.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")) )    #updating the scroll
+        self.task_frame = tk.Frame(self.canvas, background="white")
+        self.canvas.create_window((0, 0), window=self.task_frame, anchor="nw")
 
-        # task frame
-        self.task_frame = tk.Frame(self.root)
-        self.task_frame.pack(padx=20, pady=10, anchor="w")
-        #checkbox column
-        self.checkbox_frame = tk.Frame(self.task_frame)
-        self.checkbox_frame.pack(side="left")
-        #listbox column
-        self.listbox_task = tk.Listbox(self.task_frame, width=40, height=10, font=('Arial', 14))
-        self.listbox_task.pack(side="left")
-
-        #scrolling
-        self.scroll = tk.Scrollbar(self.task_frame, orient="vertical", command=self.listbox_task.yview)
-        self.scroll.pack(side="left", fill="y")
-        self.listbox_task.configure(yscrollcommand=self.scroll.set)
+        #update scrolling
+        self.task_frame.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")) )    #updating the scroll
 
 
         #button frame
@@ -89,18 +81,25 @@ class GUI:
 
         self.root.mainloop()
 
+
     def add_task_gui(self):
         self.task_name = self.add_textbox.get("1.0", tk.END).strip()    #read what the user types
         if not self.task_name:      #if textbox is empty
             return
+        
         # add to the checklist logic
         self.todolist.add_task(self.task_name)
-        # add to listbox
-        self.listbox_task.insert(tk.END, self.task_name)
+
+        # one frame per task
+        self.task_row = tk.Frame(self.task_frame, background="white")
+        self.task_row.pack(anchor="w")
         #add checkbox
         self.is_ticked = tk.BooleanVar(value=False)
-        self.checkbox= tk.Checkbutton(self.checkbox_frame, variable=self.is_ticked)
-        self.checkbox.pack(anchor="w")
+        self.checkbox= tk.Checkbutton(self.task_row, variable=self.is_ticked, background="white")
+        self.checkbox.pack(side="left")
+        #add the label for the task
+        self.task_label= tk.Label(self.task_row, text=self.task_name, font=('Arial', 14), background="white")
+        self.task_label.pack(side="left")
 
         #store the references
         self.todolist.tasks[-1]["is_ticked"] = self.is_ticked       #item goes to end of the list to refer to the just added task
