@@ -5,7 +5,7 @@ from tkinter import ttk
 class GUI:
     def __init__(self):
 
-        self.todolist = checklist()     #link to checklist
+        self.todolist = checklist()     #link to checklist class
 
         self.root = tk.Tk()
         self.root.geometry("800x500")
@@ -47,20 +47,35 @@ class GUI:
         self.add_btn.grid(row=0, column=1, sticky="w")
 
         # another frame for the canvas the checklists will be on
-        self.canvas_frame = tk.Frame(self.root)
-        self.canvas_frame.pack(padx=20, pady=20, anchor="w")
+        #self.canvas_frame = tk.Frame(self.root)
+        #self.canvas_frame.pack(padx=20, pady=20, anchor="w")
         # create canvas
-        self.canvas = tk.Canvas(self.canvas_frame, width=400, height=230, background="white", highlightbackground="black", highlightthickness=1)
-        self.canvas.pack(side="left", padx=10)
+        #self.canvas = tk.Canvas(self.canvas_frame, width=400, height=230, background="white", highlightbackground="black", highlightthickness=1)
+        #self.canvas.pack(side="left", padx=10)
         # scrolling
-        self.scroll = tk.Scrollbar(self.canvas_frame, orient="vertical", command=self.canvas.yview)
-        self.scroll.pack(side="left", fill="y")
-        self.canvas.configure(yscrollcommand=self.scroll.set)
+        #self.scroll = tk.Scrollbar(self.canvas_frame, orient="vertical", command=self.canvas.yview)
+        #self.scroll.pack(side="left", fill="y")
+        #self.canvas.configure(yscrollcommand=self.scroll.set)
 
         # task frame inside the canvas
-        self.taskframe = tk.Frame(self.canvas, background="white")
-        self.canvas.create_window((0, 0), window=self.taskframe, anchor="nw")
-        self.taskframe.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")) )    #updating the scroll
+        #self.taskframe = tk.Frame(self.canvas, background="white")
+        #self.canvas.create_window((0, 0), window=self.taskframe, anchor="nw")
+        #self.taskframe.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")) )    #updating the scroll
+
+        # task frame
+        self.task_frame = tk.Frame(self.root)
+        self.task_frame.pack(padx=20, pady=10, anchor="w")
+        #checkbox column
+        self.checkbox_frame = tk.Frame(self.task_frame)
+        self.checkbox_frame.pack(side="left")
+        #listbox column
+        self.listbox_task = tk.Listbox(self.task_frame, width=40, height=10, font=('Arial', 14))
+        self.listbox_task.pack(side="left")
+
+        #scrolling
+        self.scroll = tk.Scrollbar(self.task_frame, orient="vertical", command=self.listbox_task.yview)
+        self.scroll.pack(side="left", fill="y")
+        self.listbox_task.configure(yscrollcommand=self.scroll.set)
 
 
         #button frame
@@ -78,11 +93,13 @@ class GUI:
         self.task_name = self.add_textbox.get("1.0", tk.END).strip()    #read what the user types
         if not self.task_name:      #if textbox is empty
             return
-        #add to checklist logic
+        # add to the checklist logic
         self.todolist.add_task(self.task_name)
-        #create the checkbox
+        # add to listbox
+        self.listbox_task.insert(tk.END, self.task_name)
+        #add checkbox
         self.is_ticked = tk.BooleanVar(value=False)
-        self.checkbox= tk.Checkbutton(self.taskframe, text=self.task_name, font=('Arial', 15), background="white", variable=self.is_ticked)
+        self.checkbox= tk.Checkbutton(self.checkbox_frame, variable=self.is_ticked)
         self.checkbox.pack(anchor="w")
 
         #store the references
