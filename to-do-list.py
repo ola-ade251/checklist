@@ -88,32 +88,32 @@ class GUI:
 
 
     def add_task_gui(self):
-        self.task_name = self.add_textbox.get("1.0", tk.END).strip()    #read what the user types
-        if not self.task_name:      #if textbox is empty
+        task_name = self.add_textbox.get("1.0", tk.END).strip()    #read what the user types
+        if not task_name:      #if textbox is empty
             return
         
         # add to the checklist logic
-        self.todolist.add_task(self.task_name)
+        self.todolist.add_task(task_name)
 
         # one frame per task
-        self.task_row = tk.Frame(self.task_frame, background="white")
-        self.task_row.pack(anchor="w")
+        task_row = tk.Frame(self.task_frame, background="white")
+        task_row.pack(anchor="w")
         # click row to call selecting function, and update the index of the tasks
-        self.task_row.bind("<Button-1>", lambda e, idx=len(self.todolist.tasks)-1:self.select_task(idx))
+        task_row.bind("<Button-1>", lambda e, idx=len(self.todolist.tasks)-1:self.select_task(idx))
         #add checkbox
-        self.is_ticked = tk.BooleanVar(value=False)
-        self.checkbox= tk.Checkbutton(self.task_row, variable=self.is_ticked, background="white", command=lambda idx=len(self.todolist.tasks)-1: self.toggle_task_gui(idx))
-        self.checkbox.pack(side="left")
+        is_ticked = tk.BooleanVar(value=False)
+        checkbox= tk.Checkbutton(task_row, variable=is_ticked, background="white", command=lambda idx=len(self.todolist.tasks)-1: self.toggle_task_gui(idx))
+        checkbox.pack(side="left")
         #add the label for the task
-        self.task_label= tk.Label(self.task_row, text=self.task_name, font=('Arial', 14), background="white", wraplength=400, justify="left")
-        self.task_label.pack(side="left")
-        self.task_label.bind("<Button-1>", lambda e, idx=len(self.todolist.tasks)-1:self.select_task(idx))
+        task_label= tk.Label(task_row, text=task_name, font=('Arial', 14), background="white", wraplength=400, justify="left")
+        task_label.pack(side="left")
+        task_label.bind("<Button-1>", lambda e, idx=len(self.todolist.tasks)-1:self.select_task(idx))
 
         #store the references
-        self.todolist.tasks[-1]["is_ticked"] = self.is_ticked       #item goes to end of the list to refer to the just added task
-        self.todolist.tasks[-1]["row"] = self.task_row
-        self.todolist.tasks[-1]["checkbox"] = self.checkbox
-        self.todolist.tasks[-1]["label"] = self.task_label
+        self.todolist.tasks[-1]["is_ticked"] = is_ticked       #item goes to end of the list to refer to the just added task
+        self.todolist.tasks[-1]["row"] = task_row
+        self.todolist.tasks[-1]["checkbox"] = checkbox
+        self.todolist.tasks[-1]["label"] = task_label
 
 
         #clear textbox once button pressed
