@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import messagebox
 
 
 class GUI:
@@ -153,6 +154,13 @@ class GUI:
         
         self.idx = self.selected_task_idx
 
+        self.task_name = self.todolist.tasks[self.idx]["task_name"]
+        self.del_confirm = messagebox.askyesno(
+            title="Delete Task", 
+            message=f"Are you sure you want to delete task \n\n '{self.task_name}'?")
+        if not self.del_confirm:
+            return
+
 
         #remove widgets
         self.task= self.todolist.tasks[self.idx]
@@ -177,8 +185,14 @@ class GUI:
         self.upgrade_progress()
 
 
-
     def clear_tasks_gui(self):
+
+        self.clear_confirm = messagebox.askyesno(
+            title="Clear All", 
+            message=f"Are you sure you want to clear all tasks?")
+        if not self.clear_confirm:
+            return
+
         #remove all rows
         for self.task in self.todolist.tasks:
             self.task["row"].destroy()
@@ -225,7 +239,6 @@ class checklist:
                 self.box = "[x]"
             else:
                 self.box = "[ ]"
-            print(f"{self.box} {task["task_name"]}")
 
     def progress_bar(self):
         if len(self.tasks) == 0:
