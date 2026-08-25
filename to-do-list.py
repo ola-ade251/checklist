@@ -77,7 +77,7 @@ class GUI:
         #buttons
         self.del_btn = tk.Button(self.btn_frame, text= "Delete", font=("Arial", 13), command=self.del_task_gui)
         self.del_btn.grid(row=0, column=0, padx=10)
-        self.clear_btn = tk.Button(self.btn_frame, text= "Clear", font=("Arial", 13))
+        self.clear_btn = tk.Button(self.btn_frame, text= "Clear", font=("Arial", 13), command=self.clear_tasks_gui)
         self.clear_btn.grid(row=0, column=1, padx=10)
 
 
@@ -169,6 +169,16 @@ class GUI:
             self.task_row.bind("<Button-1>", lambda e, idx=i: self.select_task(idx))
             self.task_label.bind("<Button-1>", lambda e, idx=i: self.select_task(idx))
 
+
+
+    def clear_tasks_gui(self):
+        #remove all rows
+        for self.task in self.todolist.tasks:
+            self.task["row"].destroy()
+        self.todolist.clear_tasks()
+        #reset
+        self.selected_task_idx=None
+
     #def check(self,event):
         #print(event.keysym)
         #print(event.state)
@@ -184,6 +194,9 @@ class checklist:
     def del_task(self, index):
         self.removed_task = self.tasks.pop(index)
         print("Deleted:", self.removed_task["task_name"])
+
+    def clear_tasks(self):
+        self.tasks.clear()
 
     def toggle_task(self, index):      #ticking and unticking off tasks
         self.tasks[index]["status"] = not self.tasks[index]["status"]    #task you have selected to mark done, its status will change to the opposite
