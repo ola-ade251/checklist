@@ -29,9 +29,6 @@ class GUI:
         self.progress_bar = ttk.Progressbar(self.progress_frame, orient="vertical", length=150, mode="determinate", style="Thick.Vertical.TProgressbar")
         self.progress_bar.pack(pady=20)
 
-        #self.progress_bar['value']=50
-        #SET IT TO MATCH WHATS IN THE CHECKLIST CLASS-----------
-
         self.progress_label = tk.Label(self.progress_frame, text="0% complete", font=('Arial', 15))
         self.progress_label.pack()
 
@@ -42,8 +39,9 @@ class GUI:
 
         # grid inside the frame
         self.add_textbox = tk.Text(self.frame, height=1, width=40, font= ('Arial', 13))
-        #self.add_textbox.bind("<KeyPress>", self.check)
         self.add_textbox.grid(row=0, column=0, sticky="w")
+        # allow return key to do the same job as the add task
+        self.add_textbox.bind("<Return>", self.enter_key)
 
         # button also inside frame on the ride side of the textbox
         self.add_btn = tk.Button(self.frame, text= "Add Task", font=('Arial', 13), command =self.add_task_gui)
@@ -120,6 +118,10 @@ class GUI:
         self.add_textbox.delete("1.0", tk.END)
         #update the progress bar
         self.upgrade_progress()
+
+    def enter_key(self, event):
+        self.add_task_gui()
+        return "break"
 
 
     def select_task(self, index):
@@ -198,9 +200,6 @@ class GUI:
         self.progress_label.config(text = f"{self.percent:.0f}% complete")
 
 
-    #def check(self,event):
-        #print(event.keysym)
-        #print(event.state)
 
 class checklist:
     def __init__(self):
