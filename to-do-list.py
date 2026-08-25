@@ -10,9 +10,10 @@ class GUI:
 
         self.root = tk.Tk()
         self.root.geometry("800x500")
+        self.root.configure(background="#ABB4D9")
         self.root.title("checklist")
 
-        self.label = tk.Label(self.root, text="To Do List", font =('Arial', 20))
+        self.label = tk.Label(self.root, text="To Do List", font =('Arial', 20), background="#ABB4D9")
         self.label.pack(padx=20, pady=20)
 
 
@@ -20,22 +21,22 @@ class GUI:
         style = ttk.Style()
         style.theme_use("default")
 
-        style.configure("Thick.Vertical.TProgressbar", thickness= 50)       #bar width
+        style.configure("Thick.Vertical.TProgressbar", thickness= 50, background="#B4D9AB")       #bar width
 
         # proress bar frame
-        self.progress_frame = tk.Frame(self.root)
+        self.progress_frame = tk.Frame(self.root, background="#ABB4D9")
         self.progress_frame.place(relx=0.75, rely=0.5, anchor="center")
         self.progress_frame.pack_propagate(True)
 
         self.progress_bar = ttk.Progressbar(self.progress_frame, orient="vertical", length=150, mode="determinate", style="Thick.Vertical.TProgressbar")
         self.progress_bar.pack(pady=20)
 
-        self.progress_label = tk.Label(self.progress_frame, text="0% complete", font=('Arial', 15))
+        self.progress_label = tk.Label(self.progress_frame, text="0% complete", font=('Arial', 15), background="#ABB4D9")
         self.progress_label.pack()
 
 
         # put textbox inside frame- so the textbox can stick to the left hand side
-        self.frame= tk.Frame(self.root)
+        self.frame= tk.Frame(self.root, background="#ABB4D9")
         self.frame.pack(padx=20, pady=20, anchor="nw")  #top corner of the frame
 
         # grid inside the frame
@@ -50,7 +51,7 @@ class GUI:
 
 
         # another frame for the canvas the checklists will be on
-        self.canvas_frame = tk.Frame(self.root)
+        self.canvas_frame = tk.Frame(self.root, background="#ABB4D9")
         self.canvas_frame.pack(padx=20, pady=20, anchor="w")
 
         # create canvas
@@ -71,7 +72,7 @@ class GUI:
 
 
         #button frame
-        self.btn_frame = tk.Frame(self.root)
+        self.btn_frame = tk.Frame(self.root, background="#ABB4D9")
         self.btn_frame.pack(padx=300, anchor="nw")
         #buttons
         self.del_btn = tk.Button(self.btn_frame, text= "Delete", font=("Arial", 13), command=self.del_task_gui)
@@ -134,18 +135,18 @@ class GUI:
 
         #highlight the selected task/row
         for i, task in enumerate(self.todolist.tasks):
-            self.task_row = task.get("row")
-            self.checkbox = task.get("checkbox")
-            self.task_label = task.get("label")
+            task_row = task.get("row")
+            checkbox = task.get("checkbox")
+            task_label = task.get("label")
 
             if self.selected_task_idx == i:
-                self.task_row.config(background="light blue")
-                self.checkbox.config(background="light blue")
-                self.task_label.config(background="light blue")
+                task_row.config(background="#E8F0DD")
+                checkbox.config(background="#E8F0DD")
+                task_label.config(background="#E8F0DD")
             else:
-                self.task_row.config(background="white")
-                self.checkbox.config(background="white")
-                self.task_label.config(background="white")
+                task_row.config(background="white")
+                checkbox.config(background="white")
+                task_label.config(background="white")
 
 
     def del_task_gui(self):
@@ -173,13 +174,13 @@ class GUI:
 
         #rebind for other tasks
         for i, task in enumerate(self.todolist.tasks):
-            self.task_row = task["row"]
-            self.task_label = task["label"]
+            task_row = task["row"]
+            task_label = task["label"]
             #take away old binds, and rebind with new indexes
-            self.task_row.unbind("<Button-1>")
-            self.task_label.unbind("<Button-1>")
-            self.task_row.bind("<Button-1>", lambda e, idx=i: self.select_task(idx))
-            self.task_label.bind("<Button-1>", lambda e, idx=i: self.select_task(idx))
+            task_row.unbind("<Button-1>")
+            task_label.unbind("<Button-1>")
+            task_row.bind("<Button-1>", lambda e, idx=i: self.select_task(idx))
+            task_label.bind("<Button-1>", lambda e, idx=i: self.select_task(idx))
 
         #update progress
         self.upgrade_progress()
@@ -194,8 +195,8 @@ class GUI:
             return
 
         #remove all rows
-        for self.task in self.todolist.tasks:
-            self.task["row"].destroy()
+        for task in self.todolist.tasks:
+            task["row"].destroy()
         self.todolist.clear_tasks()
         #reset
         self.selected_task_idx=None
@@ -225,20 +226,12 @@ class checklist:
 
     def del_task(self, index):
         self.removed_task = self.tasks.pop(index)
-        print("Deleted:", self.removed_task["task_name"])
 
     def clear_tasks(self):
         self.tasks.clear()
 
     def toggle_task(self, index):      #ticking and unticking off tasks
         self.tasks[index]["status"] = not self.tasks[index]["status"]    #task you have selected to mark done, its status will change to the opposite
-
-    def print_tasks(self):
-        for task in self.tasks:
-            if task["status"]==True:
-                self.box = "[x]"
-            else:
-                self.box = "[ ]"
 
     def progress_bar(self):
         if len(self.tasks) == 0:
