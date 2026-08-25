@@ -29,10 +29,10 @@ class GUI:
         self.progress_bar = ttk.Progressbar(self.progress_frame, orient="vertical", length=150, mode="determinate", style="Thick.Vertical.TProgressbar")
         self.progress_bar.pack(pady=20)
 
-        self.progress_bar['value']=50
+        #self.progress_bar['value']=50
         #SET IT TO MATCH WHATS IN THE CHECKLIST CLASS-----------
 
-        self.progress_label = tk.Label(self.progress_frame, text="x% complete", font=('Arial', 15))
+        self.progress_label = tk.Label(self.progress_frame, text="0% complete", font=('Arial', 15))
         self.progress_label.pack()
 
 
@@ -102,7 +102,7 @@ class GUI:
         self.task_row.bind("<Button-1>", lambda e, idx=len(self.todolist.tasks)-1:self.select_task(idx))
         #add checkbox
         self.is_ticked = tk.BooleanVar(value=False)
-        self.checkbox= tk.Checkbutton(self.task_row, variable=self.is_ticked, background="white")
+        self.checkbox= tk.Checkbutton(self.task_row, variable=self.is_ticked, background="white", command=lambda idx=len(self.todolist.tasks)-1: self.toggle_task_gui(idx))
         self.checkbox.pack(side="left")
         #add the label for the task
         self.task_label= tk.Label(self.task_row, text=self.task_name, font=('Arial', 14), background="white", wraplength=400, justify="left")
@@ -118,6 +118,8 @@ class GUI:
 
         #clear textbox once button pressed
         self.add_textbox.delete("1.0", tk.END)
+        #update the progress bar
+        self.upgrade_progress()
 
 
     def select_task(self, index):
@@ -169,6 +171,9 @@ class GUI:
             self.task_row.bind("<Button-1>", lambda e, idx=i: self.select_task(idx))
             self.task_label.bind("<Button-1>", lambda e, idx=i: self.select_task(idx))
 
+        #update progress
+        self.upgrade_progress()
+
 
 
     def clear_tasks_gui(self):
@@ -178,6 +183,20 @@ class GUI:
         self.todolist.clear_tasks()
         #reset
         self.selected_task_idx=None
+
+        self.upgrade_progress()
+
+
+    def toggle_task_gui(self, index):
+        self.todolist.toggle_task(index)
+        self.upgrade_progress()
+
+
+    def upgrade_progress(self):
+        self.percent = self.todolist.progress_bar()
+        self.progress_bar['value'] = self.percent
+        self.progress_label.config(text = f"{self.percent:.0f}% complete")
+
 
     #def check(self,event):
         #print(event.keysym)
@@ -219,7 +238,7 @@ class checklist:
             if task["status"] == True:
                 self.done += 1
         self.progress = (self.done/self.total)*100
-        print(f"{self.progress}%")
+        return self.progress
 
 GUI()
 
